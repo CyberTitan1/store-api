@@ -4,6 +4,7 @@ from flask_restful import Api
 import datetime
 import os
 from resources.user import refresh_bp, Register_User, revoked_tokens, User, logout_bp
+from db import db
 
 base_app = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user.db")
 app = Flask(__name__)
@@ -14,8 +15,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{base_app}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
+
 jwt = JWTManager(app)
 api = Api(app)
+db.init_app(app)
 
 
 @app.before_request
@@ -36,6 +39,4 @@ api.add_resource(User, '/users/<int:user_id>', '/users')
 api.add_resource(Register_User, '/register')
 
 if __name__ == "__main__":
-    from db import db
-    db.init_app(app)
     app.run(port=5000, debug=True)
